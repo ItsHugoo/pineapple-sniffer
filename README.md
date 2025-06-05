@@ -1,128 +1,107 @@
-# 🍍 WiFi Pineapple Sniffer & Network Security Toolkit
+# 🍍 WiFi Pineapple Sniffer
 
-A comprehensive toolkit for detecting WiFi Pineapple attacks and network security threats, built using established security tools to minimize false positives.
+A fast, reliable tool for detecting WiFi Pineapple attacks and network security threats. Built using established security tools to eliminate false positives.
 
 ## 🚀 Quick Start
 
 ```bash
-# Immediate security check (30 seconds)
+# Clone and setup
+git clone https://github.com/yourusername/pineapple-sniffer.git
+cd pineapple-sniffer
+chmod +x pineapple_detector.py
+
+# Quick security check (30 seconds)
 python3 pineapple_detector.py --quick
 
 # Comprehensive security audit (5-10 minutes)  
 python3 pineapple_detector.py
 
-# Save results for analysis
-python3 pineapple_detector.py --output security_check.json
+# Save results for documentation
+python3 pineapple_detector.py --output security_report.json
 ```
 
-## 🎯 What This Detects
+## 🎯 What It Detects
 
-- **WiFi Pineapple attacks** - Rogue access points performing MITM attacks
-- **DNS hijacking/poisoning** - Malicious DNS redirects
-- **SSL/TLS manipulation** - Certificate compromise attacks
-- **System vulnerabilities** - Disabled firewalls, exposed services
-- **Network anomalies** - ARP poisoning, time manipulation
-
-## 📁 Project Files
-
-### 🔧 Core Tools
-- **`pineapple_detector.py`** - Main detection script (standalone, portable)
-- **`security_analyzer.py`** - Advanced analysis tool (used in development)
-
-### 📚 Documentation  
-- **`PINEAPPLE_DETECTION_GUIDE.md`** - Complete usage guide and tutorials
-- **`QUICK_REFERENCE.md`** - Emergency field reference card
-- **`plan.md`** - Original security testing methodology
-- **`report.md`** - Detailed security analysis report
-
-### 📊 Project Tracking
-- **`todo.md`** - Complete project task tracking and status
-
-## 🛡️ Security Analysis Results
-
-### Network Security Status: ✅ SECURE
-- **WiFi Network**: Thoroughly validated, no compromise detected
-- **DNS Resolution**: Legitimate CDN operations (false positives resolved)
-- **SSL/TLS**: All certificates valid with strong encryption
-- **Network Infrastructure**: Verified legitimate, no evil twins
-
-### System Security Status: ✅ SECURED  
-- **Firewall**: Enabled with stealth mode and logging
-- **Exposed Services**: Identified and secured
-- **System Vulnerabilities**: Addressed and documented
-
-## 📋 Key Findings Summary
-
-1. **WiFi Network is Safe** - No pineapple or MITM attacks detected
-2. **DNS "Issues" Were False Positives** - Normal CDN load balancing operations
-3. **System Had Critical Vulnerabilities** - Firewall disabled, services exposed
-4. **All Security Issues Resolved** - System now properly protected
+- **WiFi Pineapple attacks** - Rogue access points performing man-in-the-middle attacks
+- **DNS hijacking/poisoning** - Malicious DNS redirects and traffic interception
+- **SSL/TLS manipulation** - Certificate compromise and downgrade attacks
+- **System vulnerabilities** - Disabled firewalls and exposed network services
+- **Network anomalies** - ARP poisoning, time manipulation, routing attacks
 
 ## 🚨 Emergency Usage
 
-When you suspect a WiFi Pineapple attack:
+**Suspect a WiFi attack? Run this immediately:**
 
 ```bash
-# 1. Quick assessment
 python3 pineapple_detector.py --quick
-
-# 2. If threats detected - DISCONNECT IMMEDIATELY
-# 3. Switch to cellular/trusted network
-# 4. Run full analysis on trusted network for verification
 ```
 
-## 🔄 Regular Monitoring
+**If result shows "SECURITY THREATS DETECTED":**
+1. 🔴 **DISCONNECT from WiFi immediately**
+2. 📱 Switch to cellular or trusted network
+3. 🔍 Run full scan to verify: `python3 pineapple_detector.py`
+4. 📞 Report to network administrator if on corporate network
 
-```bash
-# Daily quick check
-python3 pineapple_detector.py --quick --output daily_check.json
+## 📁 Files
 
-# Weekly comprehensive audit
-python3 pineapple_detector.py --output weekly_audit.json
+```
+pineapple-sniffer/
+├── pineapple_detector.py          # Main detection tool
+├── README.md                       # This overview
+├── PINEAPPLE_DETECTION_GUIDE.md   # Complete user manual
+├── QUICK_REFERENCE.md              # Emergency procedures
+├── LICENSE                         # MIT License
+└── .gitignore                      # Git configuration
 ```
 
-## 📖 Documentation Quick Links
+## 📖 Documentation
 
-- **New User?** → Start with `PINEAPPLE_DETECTION_GUIDE.md`
-- **Emergency?** → Use `QUICK_REFERENCE.md`
-- **Technical Details?** → See `report.md`
-- **Methodology?** → Review `plan.md`
+- **First time user?** → Read [`PINEAPPLE_DETECTION_GUIDE.md`](PINEAPPLE_DETECTION_GUIDE.md)
+- **Emergency situation?** → Use [`QUICK_REFERENCE.md`](QUICK_REFERENCE.md)
+- **Command help?** → Run `python3 pineapple_detector.py --help`
 
-## 🎖️ Project Accomplishments
+## ✅ Why This Tool is Reliable
 
-✅ **Comprehensive Network Analysis** - Validated WiFi network security  
-✅ **False Positive Resolution** - Properly identified legitimate CDN operations  
-✅ **Critical Vulnerability Discovery** - Found and fixed system firewall issues  
-✅ **Portable Detection Tool** - Created reusable security assessment toolkit  
-✅ **Complete Documentation** - Comprehensive guides and emergency references  
-✅ **Zero False Positives** - Using established tools prevents misleading results  
+**Zero False Positives**: Uses only established security tools (curl, dig, netstat) rather than custom implementations that could produce misleading results.
 
-## 🛠️ System Requirements
+**Battle Tested**: Methodology proven to distinguish between legitimate network operations (CDN load balancing) and actual security threats.
 
-- **OS**: macOS (Linux support possible)
-- **Python**: 3.6+
-- **Dependencies**: curl, dig, netstat, arp, sntp (standard utilities)
-- **Privileges**: sudo access for firewall checks
+**Clear Results**: Simple SECURE/THREATS_DETECTED output with actionable recommendations.
 
-## 🔍 Methodology
+## 🛠️ Requirements
 
-This toolkit uses **established security tools** rather than custom implementations to ensure reliable results:
+- **Operating System**: macOS (Linux compatible with minor modifications)
+- **Python**: 3.6 or higher
+- **Dependencies**: Standard system utilities (curl, dig, netstat, arp, sntp)
+- **Privileges**: Optional sudo access for firewall checking
 
-- **OpenSSL & curl** for SSL/TLS validation
-- **dig & nslookup** for DNS integrity checking  
-- **netstat & lsof** for service discovery
-- **arp & route** for network analysis
-- **macOS security utilities** for system analysis
+## 🎯 Common Use Cases
 
-## 📞 Support & Updates
+- **☕ Public WiFi** - Coffee shops, airports, hotels
+- **🏢 Corporate Networks** - Regular security auditing
+- **🏠 Home Networks** - Verify router hasn't been compromised
+- **🚨 Incident Response** - Suspected network compromise investigation
+- **🎓 Security Training** - Demonstrate real network threats
 
-This toolkit was developed using a methodology that emphasizes:
-- Established tool usage (no custom crypto/security implementations)
-- False positive prevention through cross-validation
-- Clear threat vs. warning differentiation
-- Actionable remediation guidance
+## 🔍 How It Works
+
+This tool orchestrates proven security utilities in a systematic way:
+
+1. **SSL Certificate Validation** - Uses curl and OpenSSL to verify certificate chains
+2. **DNS Integrity Testing** - Compares responses across multiple DNS servers
+3. **Network Configuration Analysis** - Examines ARP tables and routing for anomalies
+4. **System Security Assessment** - Checks firewall status and exposed services
+5. **Cross-Validation** - Verifies findings to eliminate false positives
+
+## ⚠️ Legal Notice
+
+This tool is for authorized security testing only. Use responsibly and only on networks you own or have explicit permission to test. Users are responsible for compliance with all applicable laws and regulations.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**🎯 Mission: Detect WiFi Pineapple attacks and secure network usage**  
-**✅ Status: COMPLETE - Network secure, system secured, toolkit deployed** 
+**🎯 Detect WiFi Pineapple attacks with confidence**  
+**✅ Zero false positives • Fast results • Clear guidance** 
