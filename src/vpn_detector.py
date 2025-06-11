@@ -124,7 +124,9 @@ class VPNConfigDetector:
             for line in output.split('\n')[4:]:  # Skip header lines
                 parts = line.split()
                 if len(parts) >= 8:
-                    routes[parts[0]] = parts[5]
+                    # Add 'default' route specifically
+                    if parts[0] == 'default':
+                        routes['default'] = parts[5]
             return routes
         except Exception:
             return {}
