@@ -26,24 +26,21 @@ class VPNConfigDetector:
                                     text=True, 
                                     check=True)
             
-            # Normalized regex pattern with more flexible matching
+            # Very explicit regex to handle multiple line formats
             pattern = re.compile(
-                r'^(\d+):\s*(\w+):.*\n'  # Capture interface index and name
-                r'.*\n'                  # Optional intermediate lines
-                r'\s*inet\s+(\d+\.\d+\.\d+\.\d+)', 
+                r'^(\d+):\s*(\w+):.*\n'  # Interface index and name
+                r'(?:.*\n)*'             # Optional intermediate lines
+                r'\s*inet\s+(\d+\.\d+\.\d+\.\d+).*$',  # Capture IP with flexible formatting
                 re.MULTILINE
             )
             
-            # Use findall to match multiple interfaces
-            matches = pattern.findall(result.stdout)
-            
-            # Convert to dictionary, prioritizing VPN-like interfaces
             interfaces = {}
-            for match in matches:
-                interface_name = match[1]
-                ip_address = match[2]
+            for match in pattern.finditer(result.stdout):
+                interface_name = match.group(2)
+                ip_address = match.group(3)
                 interfaces[interface_name] = ip_address
             
+            print(f"DEBUG: Full output: {result.stdout}", file=sys.stderr)
             print(f"DEBUG: Detected interfaces: {interfaces}", file=sys.stderr)
             return interfaces
         
