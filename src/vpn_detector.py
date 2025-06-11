@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import re
 from typing import Dict, List, Optional
 
 class VPNConfigDetector:
@@ -29,8 +30,7 @@ class VPNConfigDetector:
                 check=True
             )
             return result.stdout.strip()
-        except subprocess.CalledProcessError as e:
-            # Log the error or handle it appropriately
+        except subprocess.CalledProcessError:
             return ""
 
     @classmethod
@@ -85,7 +85,7 @@ class VPNConfigDetector:
             output = cls._run_command(['ip', 'link', 'show'])
             vpn_keywords = ['tun', 'tap', 'wireguard', 'ppp', 'ipsec']
             return [
-                line.split(':')[1].strip() 
+                line.split(':')[1].strip().split('@')[0] 
                 for line in output.split('\n') 
                 if any(keyword in line.lower() for keyword in vpn_keywords)
             ]
@@ -123,8 +123,8 @@ class VPNConfigDetector:
             routes = {}
             for line in output.split('\n')[4:]:  # Skip header lines
                 parts = line.split()
-                if len(parts) >= 4:
-                    routes[parts[0]] = parts[3]
+                if len(parts) >= 8:
+                    routes[parts[0]] = parts[5]
             return routes
         except Exception:
             return {}
@@ -143,7 +143,9 @@ class VPNConfigDetector:
             for line in output.split('\n'):
                 parts = line.split()
                 if parts and len(parts) >= 3:
-                    routes[parts[0]] = parts[2]
+                    # If route contains 'dev', extract the interface
+                    dev_index = parts.index('dev') + 1 if 'dev' in parts else None
+                    routes[parts[0]] = parts[dev_index] if dev_index is not None else parts[2]
             return routes
         except Exception:
             return {}
