@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { fileNotFoundMiddleware, FileNotFoundError } from '../src/middleware/file-not-found.middleware';
 import { Request, Response, NextFunction } from 'express';
 
@@ -6,25 +6,25 @@ describe('fileNotFoundMiddleware', () => {
   it('should handle FileNotFoundError with 404 status', () => {
     // Create mock request, response, and next function
     const mockReq = {} as Request;
+    const mockJson = vi.fn();
+    const mockStatus = vi.fn().mockReturnValue({ json: mockJson });
     const mockRes = {
-      status: (code: number) => ({
-        json: (body: any) => {
-          expect(code).toBe(404);
-          expect(body).toEqual({
-            error: 'File not found',
-            message: 'The requested file could not be located.'
-          });
-          return mockRes;
-        }
-      })
-    } as Response;
-    const mockNext = jest.fn() as unknown as NextFunction;
+      status: mockStatus
+    } as unknown as Response;
+    const mockNext = vi.fn() as unknown as NextFunction;
 
     // Create a FileNotFoundError
     const error = new FileNotFoundError('Test file not found');
 
     // Call middleware
     fileNotFoundMiddleware(error, mockReq, mockRes, mockNext);
+
+    // Verify status and json methods were called correctly
+    expect(mockStatus).toHaveBeenCalledWith(404);
+    expect(mockJson).toHaveBeenCalledWith({
+      error: 'File not found',
+      message: 'The requested file could not be located.'
+    });
 
     // Verify next was not called
     expect(mockNext).not.toHaveBeenCalled();
@@ -33,11 +33,13 @@ describe('fileNotFoundMiddleware', () => {
   it('should pass non-FileNotFoundError to next middleware', () => {
     // Create mock request, response, and next function
     const mockReq = {} as Request;
+    const mockJson = vi.fn();
+    const mockStatus = vi.fn().mockReturnValue({ json: mockJson });
     const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: mockStatus,
+      json: mockJson
     } as unknown as Response;
-    const mockNext = jest.fn() as unknown as NextFunction;
+    const mockNext = vi.fn() as unknown as NextFunction;
 
     // Create a generic error
     const error = new Error('Generic error');
@@ -47,7 +49,7 @@ describe('fileNotFoundMiddleware', () => {
 
     // Verify next was called with the error
     expect(mockNext).toHaveBeenCalledWith(error);
-    expect(mockRes.status).not.toHaveBeenCalled();
+    expect(mockStatus).not.toHaveBeenCalled();
   });
 
   it('should create FileNotFoundError with correct properties', () => {
