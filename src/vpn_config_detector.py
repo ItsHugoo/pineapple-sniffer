@@ -119,11 +119,28 @@ def configure_logging(log_file: typing.Optional[str] = None, log_level: int = lo
         log_file (str, optional): Path to log file
         log_level (int): Logging level
     """
-    logging.basicConfig(
-        level=log_level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(log_file) if log_file else logging.NullHandler()
-        ]
-    )
+    # Get the root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+
+    # Clear existing handlers
+    root_logger.handlers.clear()
+    
+    # Formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    
+    # Console Handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
+    
+    # File Handler (if log_file is provided)
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(log_level)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
+    
+    # Set specific logger for this module to the specified level
+    logging.getLogger('src.vpn_config_detector').setLevel(log_level)
