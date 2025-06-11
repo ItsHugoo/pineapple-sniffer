@@ -1,0 +1,14 @@
+{
+  "name": "cdn-file-serving-middleware",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.1"
+  }
+}
