@@ -121,23 +121,29 @@ class VPNConfigDetector:
         try:
             output = cls._run_command(['netstat', '-nr'])
             routes = {}
-            header_found = False
-            for line in output.split('\n'):
-                # Skip lines before the header and blank lines
-                if not line.strip():
+            
+            # Detect the header row dynamically
+            lines = output.split('\n')
+            header_index = -1
+            for i, line in enumerate(lines):
+                if 'Destination' in line and 'Gateway' in line and 'Flags' in line:
+                    header_index = i
+                    break
+
+            if header_index == -1:
+                return routes
+
+            # Parse routes starting from lines after the header
+            for line in lines[header_index+1:]:
+                parts = line.split()
+                if not parts:
                     continue
-                
-                # Find the header row to start processing routes
-                if 'Destination' in line and 'Gateway' in line:
-                    header_found = True
-                    continue
-                
-                if header_found:
-                    parts = line.split()
-                    # Check for default route (at least 8 columns to be a valid route)
-                    if len(parts) >= 8 and parts[0] == 'default':
-                        routes['default'] = parts[5]
-                        break
+
+                # Check for default route
+                if parts[0] == 'default' and len(parts) >= 8:
+                    routes['default'] = parts[5]
+                    break
+
             return routes
         except Exception:
             return {}
