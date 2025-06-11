@@ -27,20 +27,20 @@ class VPNConfigDetector:
                                     check=True)
             
             interfaces = {}
-            current_interface = None
             
-            for line in result.stdout.split('\n'):
-                # Find interface name
-                interface_match = re.search(r'^\d+:\s+(\w+):', line)
-                if interface_match:
-                    current_interface = interface_match.group(1)
-                
-                # Find IP address for current interface
-                if current_interface:
-                    ip_match = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', line)
-                    if ip_match:
-                        interfaces[current_interface] = ip_match.group(1)
-                        current_interface = None
+            # More explicit regex to handle various formatting variations
+            pattern = re.compile(
+                r'^\d+:\s+(\w+):.*\n'  # Interface name line
+                r'.*\n'                # Optional lines
+                r'.*inet\s+(\d+\.\d+\.\d+\.\d+)', 
+                re.MULTILINE
+            )
+            
+            # Find all matches in the entire output
+            for match in pattern.finditer(result.stdout):
+                interface = match.group(1)
+                ip_address = match.group(2)
+                interfaces[interface] = ip_address
             
             print(f"DEBUG: Detected interfaces: {interfaces}", file=sys.stderr)
             return interfaces
