@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import sys
+import re
 from typing import Dict, Optional, List, Union
 
 class VPNDetectionError(Exception):
@@ -102,13 +103,19 @@ class VPNConfigurationDetector:
         Returns:
             List[str]: List of VPN interface names
         """
-        # This is a simplified implementation
-        vpn_keywords = ['tun', 'tap', 'ppp', 'vpn', 'utun']
-        return [
-            line.split()[-1] 
-            for line in output.splitlines() 
-            if any(keyword in line.lower() for keyword in vpn_keywords)
-        ]
+        # Sophisticated parsing
+        if sys.platform.startswith('darwin'):
+            # macOS specific parsing
+            pattern = r'Device:\s*(utun\d+)'
+            return re.findall(pattern, output)
+        elif sys.platform.startswith('linux'):
+            # Linux specific parsing (more flexible)
+            pattern = r'\d+:\s*(\w+):'
+            return [
+                match for match in re.findall(pattern, output) 
+                if any(vpn_keyword in match.lower() for vpn_keyword in ['tun', 'tap', 'vpn'])
+            ]
+        return []
     
     def get_vpn_connection_details(self) -> Optional[Dict[str, Union[str, bool]]]:
         """
