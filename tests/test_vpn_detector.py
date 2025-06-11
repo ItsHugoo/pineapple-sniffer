@@ -1,0 +1,61 @@
+import sys
+import pytest
+from src.vpn_detector import VPNConfigurationDetector
+
+def test_vpn_configuration_detector_instantiation():
+    """Test that VPNConfigurationDetector can be instantiated."""
+    detector = VPNConfigurationDetector()
+    assert detector is not None
+
+def test_detect_vpn_interfaces():
+    """Test VPN interface detection method."""
+    detector = VPNConfigurationDetector()
+    interfaces = detector.detect_vpn_interfaces()
+    
+    # We don't assert specific interfaces due to environment differences
+    assert isinstance(interfaces, dict)
+    # Check for no unauthorized keys
+    for key, value in interfaces.items():
+        assert isinstance(key, str)
+        assert isinstance(value, str)
+
+def test_get_vpn_routing_info():
+    """Test VPN routing information retrieval."""
+    detector = VPNConfigurationDetector()
+    routing_info = detector.get_vpn_routing_info()
+    
+    # Validate routing info structure
+    assert isinstance(routing_info, dict)
+    
+    # Optional: Additional validation for route keys
+    valid_keys = {'gateway', 'interface', 'error'}
+    for key in routing_info:
+        assert key in valid_keys
+
+def test_platform_specific_detection_methods():
+    """Test platform-specific VPN detection methods."""
+    detector = VPNConfigurationDetector()
+    
+    # Validate method exists for the current platform
+    if sys.platform.lower().startswith('linux'):
+        assert hasattr(detector, '_detect_linux_vpn_interfaces')
+        linux_interfaces = detector._detect_linux_vpn_interfaces()
+        assert isinstance(linux_interfaces, dict)
+    
+    elif sys.platform.lower().startswith('darwin'):
+        assert hasattr(detector, '_detect_macos_vpn_interfaces')
+        macos_interfaces = detector._detect_macos_vpn_interfaces()
+        assert isinstance(macos_interfaces, dict)
+
+def test_run_command_failure_handling():
+    """Test various command execution failure scenarios."""
+    detector = VPNConfigurationDetector()
+    
+    # Test non-existent command
+    with pytest.raises(RuntimeError, match="Command not found"):
+        detector._run_command(['nonexistent_command'])
+
+    # Mock a command that will fail (this depends on the system)
+    # For example, on Unix-like systems, you might use an impossible combination
+    with pytest.raises(RuntimeError):
+        detector._run_command(['ls', '--invalid-option-that-does-not-exist'])
