@@ -123,8 +123,13 @@ class VPNConfigDetector:
             routes = {}
             for line in output.split('\n')[4:]:  # Skip header lines
                 parts = line.split()
-                if len(parts) >= 8 and parts[0] == 'default':
-                    routes['default'] = parts[5]
+                if len(parts) >= 8:
+                    # Explicitly look for 'default' route
+                    if parts[0] == 'default':
+                        routes['default'] = parts[5]
+                    elif '/' in parts[0]:
+                        # Optional: handle other network routes if needed
+                        routes[parts[0]] = parts[5]
             return routes
         except Exception:
             return {}
