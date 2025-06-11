@@ -30,11 +30,16 @@ class VPNConfigurationDetector:
                 command, 
                 capture_output=True, 
                 text=True, 
-                check=True
+                check=True,
+                timeout=5  # Add a timeout to prevent hanging
             )
             return result.stdout.strip()
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Command execution failed: {e}")
+        except FileNotFoundError:
+            raise RuntimeError(f"Command not found: {' '.join(command)}")
+        except subprocess.TimeoutExpired:
+            raise RuntimeError(f"Command timed out: {' '.join(command)}")
 
     def detect_vpn_interfaces(self) -> Dict[str, str]:
         """
@@ -69,8 +74,11 @@ class VPNConfigurationDetector:
             interfaces_raw = self._run_command(['ip', 'tuntap', 'show'])
             tun_interfaces = re.findall(r'tun\d+', interfaces_raw)
             
-            # Add WireGuard support
-            wireguard_interfaces = self._run_command(['wg', 'show', 'interfaces']).split()
+            # Try detecting WireGuard interfaces if possible
+            try:
+                wireguard_interfaces = self._run_command(['wg', 'show', 'interfaces']).split()
+            except RuntimeError:
+                wireguard_interfaces = []
             
             combined_interfaces = {
                 **{iface: 'tun' for iface in tun_interfaces},
@@ -78,8 +86,8 @@ class VPNConfigurationDetector:
             }
             
             return combined_interfaces
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"error": str(e)}
 
     def _detect_macos_vpn_interfaces(self) -> Dict[str, str]:
         """
@@ -104,8 +112,8 @@ class VPNConfigurationDetector:
                 interfaces.update({iface: 'vpn' for iface in found_interfaces})
             
             return interfaces
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"error": str(e)}
 
     def _detect_windows_vpn_interfaces(self) -> Dict[str, str]:
         """
@@ -117,8 +125,8 @@ class VPNConfigurationDetector:
         try:
             # Future implementation for Windows VPN detection
             return {}
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"error": str(e)}
 
     def get_vpn_routing_info(self) -> Dict[str, str]:
         """
@@ -157,8 +165,8 @@ class VPNConfigurationDetector:
                     "interface": default_route.group(2)
                 }
             return {}
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"error": str(e)}
 
     def _get_macos_routing(self) -> Dict[str, str]:
         """
@@ -177,5 +185,5 @@ class VPNConfigurationDetector:
                     "interface": default_route.group(2)
                 }
             return {}
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"error": str(e)}
