@@ -27,10 +27,10 @@ class VPNConfigDetector:
             
             interfaces = {}
             for line in result.stdout.split('\n'):
-                # Regex to match interface names and IP addresses
-                match = re.search(r'^(\d+:)\s+(\w+).*inet\s+(\d+\.\d+\.\d+\.\d+)', line)
+                # Improved regex to match interface names and IP addresses
+                match = re.search(r'\d+:\s+(\w+):.*\n\s*inet\s+(\d+\.\d+\.\d+\.\d+)', line, re.MULTILINE)
                 if match:
-                    interfaces[match.group(2)] = match.group(3)
+                    interfaces[match.group(1)] = match.group(2)
             
             return interfaces
         except (subprocess.CalledProcessError, FileNotFoundError):
